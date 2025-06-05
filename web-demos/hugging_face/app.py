@@ -26,6 +26,7 @@ def parse_augment():
     parser.add_argument('--sam_model_type', type=str, default="vit_h")
     parser.add_argument('--port', type=int, default=8000, help="only useful when running gradio applications")  
     parser.add_argument('--mask_save', default=False)
+    parser.add_argument('--share', action='store_true', help='create a public link for the interface')
     args = parser.parse_args()
     
     if not args.device:
@@ -304,10 +305,25 @@ def generate_video_from_frames(frames, output_path, fps=30):
         output_path (str): The path to save the generated video.
         fps (int, optional): The frame rate of the output video. Defaults to 30.
     """
-    frames = torch.from_numpy(np.asarray(frames))
+    frames = np.asarray(frames)
     if not os.path.exists(os.path.dirname(output_path)):
         os.makedirs(os.path.dirname(output_path))
-    torchvision.io.write_video(output_path, frames, fps=fps, video_codec="libx264")
+    
+    # Get video dimensions from the first frame
+    height, width = frames[0].shape[:2]
+    
+    # Create video writer
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_path, fourcc, float(fps), (width, height))
+    
+    # Write frames
+    for frame in frames:
+        # Convert RGB to BGR for OpenCV
+        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        out.write(frame_bgr)
+    
+    # Release video writer
+    out.release()
     return output_path
 
 def restart():
@@ -642,5 +658,7 @@ with gr.Blocks(theme=gr.themes.Monochrome(), css=css) as iface:
     )
     gr.Markdown(article)
 
-iface.queue(concurrency_count=1)
-iface.launch(debug=True)
+if __name__ == "__main__":
+    args = parse_augment()
+    iface.queue()
+    iface.launch(debug=True, share=args.share, server_port=args.port)
