@@ -376,46 +376,12 @@ flow_completion_checkpoint = load_file_from_url(os.path.join(pretrain_model_url,
 model = TrackingAnything(sam_checkpoint, cutie_checkpoint, propainter_checkpoint, raft_checkpoint, flow_completion_checkpoint, args)
 
 
-title = r"""<h1 align="center">ProPainter: Improving Propagation and Transformer for Video Inpainting</h1>"""
+title = r"""<h1 align="center"></h1>"""
 
 description = r"""
 <center><img src='https://github.com/sczhou/ProPainter/raw/main/assets/propainter_logo1_glow.png' alt='Propainter logo' style="width:180px; margin-bottom:20px"></center>
-<b>Official Gradio demo</b> for <a href='https://github.com/sczhou/ProPainter' target='_blank'><b>Improving Propagation and Transformer for Video Inpainting (ICCV 2023)</b></a>.<br>
-🔥 Propainter is a robust inpainting algorithm.<br>
-🤗 Try to drop your video, add the masks and get the the inpainting results!<br>
 """
 article = r"""
-If ProPainter is helpful, please help to ⭐ the <a href='https://github.com/sczhou/ProPainter' target='_blank'>Github Repo</a>. Thanks! 
-[![GitHub Stars](https://img.shields.io/github/stars/sczhou/ProPainter?style=social)](https://github.com/sczhou/ProPainter)
-
----
-
-📝 **Citation**
-<br>
-If our work is useful for your research, please consider citing:
-```bibtex
-@inproceedings{zhou2023propainter,
-   title={{ProPainter}: Improving Propagation and Transformer for Video Inpainting},
-   author={Zhou, Shangchen and Li, Chongyi and Chan, Kelvin C.K and Loy, Chen Change},
-   booktitle={Proceedings of IEEE International Conference on Computer Vision (ICCV)},
-   year={2023}
-}
-```
-
-📋 **License**
-<br>
-This project is licensed under <a rel="license" href="https://github.com/sczhou/CodeFormer/blob/master/LICENSE">S-Lab License 1.0</a>. 
-Redistribution and use for non-commercial purposes should follow this license.
-
-📧 **Contact**
-<br>
-If you have any questions, please feel free to reach me out at <b>shangchenzhou@gmail.com</b>.
-<div>
-    🤗 Find Me:
-    <a href="https://twitter.com/ShangchenZhou"><img style="margin-top:0.5em; margin-bottom:0.5em" src="https://img.shields.io/twitter/follow/ShangchenZhou?label=%40ShangchenZhou&style=social" alt="Twitter Follow"></a> 
-    <a href="https://github.com/sczhou"><img style="margin-top:0.5em; margin-bottom:2em" src="https://img.shields.io/github/followers/sczhou?style=social" alt="Github Follow"></a>
-</div>
-
 """
 css = """
 .gradio-container {width: 85% !important}
@@ -661,4 +627,4 @@ with gr.Blocks(theme=gr.themes.Monochrome(), css=css) as iface:
 if __name__ == "__main__":
     args = parse_augment()
     iface.queue()
-    iface.launch(debug=True, share=args.share, server_port=args.port)
+    iface.launch(debug=True, share=args.share, server_port=args.port, show_api=False)
