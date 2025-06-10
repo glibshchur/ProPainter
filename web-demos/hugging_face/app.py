@@ -263,7 +263,7 @@ def vos_tracking_video(video_state, interactive_state, mask_dropdown):
 
 # inpaint 
 def inpaint_video(video_state, resize_ratio_number, dilate_radius_number, raft_iter_number, subvideo_length_number, neighbor_length_number, ref_stride_number, mask_dropdown):
-    operation_log = [("",""), ("Inpainting finished!","Normal")]
+    operation_log = [("",""), ("Starting video inpainting...","Normal")]
 
     frames = np.asarray(video_state["origin_images"])
     fps = video_state["fps"]
@@ -281,18 +281,24 @@ def inpaint_video(video_state, resize_ratio_number, dilate_radius_number, raft_i
             continue
         inpaint_masks[inpaint_masks==i] = 0
     
-    # inpaint for videos
-    inpainted_frames = model.baseinpainter.inpaint(frames, 
-                                                   inpaint_masks, 
-                                                   ratio=resize_ratio_number, 
-                                                   dilate_radius=dilate_radius_number,
-                                                   raft_iter=raft_iter_number,
-                                                   subvideo_length=subvideo_length_number, 
-                                                   neighbor_length=neighbor_length_number, 
-                                                   ref_stride=ref_stride_number)   # numpy array, T, H, W, 3
+    # inpaint for videos using streaming implementation
+    from model.propainter_stream import run_streaming_inpainting
+    
+    inpainted_frames = run_streaming_inpainting(
+        frames=frames,
+        masks=inpaint_masks,
+        model=model,
+        chunk_size=subvideo_length_number,
+        image_resize_ratio=resize_ratio_number,
+        mask_dilation=dilate_radius_number,
+        ref_stride=ref_stride_number,
+        neighbor_length=neighbor_length_number,
+        subvideo_length=subvideo_length_number
+    )
 
-    video_output = generate_video_from_frames(inpainted_frames, output_path="./result/inpaint/{}".format(video_state["video_name"]), fps=fps) # import video_input to name the output video
+    video_output = generate_video_from_frames(inpainted_frames, output_path="./result/inpaint/{}".format(video_state["video_name"]), fps=fps)
 
+    operation_log = [("",""), ("Inpainting finished!","Normal")]
     return video_output, operation_log, operation_log
 
 # generate video after vos inference
