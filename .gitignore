@@ -129,3 +129,5 @@ results/
 *.sh
 config.bat
 node_modules
+.env
+.env.local
