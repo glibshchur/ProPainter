@@ -127,5 +127,4 @@ results/
 *debug*
 *old*
 *.sh
-config.bat
 node_modules
